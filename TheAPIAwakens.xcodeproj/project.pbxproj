@@ -12,6 +12,8 @@
 		302A4BF71DAD592900A0CF98 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 302A4BF51DAD592900A0CF98 /* Main.storyboard */; };
 		302A4BF91DAD592900A0CF98 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 302A4BF81DAD592900A0CF98 /* Assets.xcassets */; };
 		302A4BFC1DAD592900A0CF98 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 302A4BFA1DAD592900A0CF98 /* LaunchScreen.storyboard */; };
+		302A4C041DB2529D00A0CF98 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 302A4C031DB2529C00A0CF98 /* HomeViewController.swift */; };
+		302A4C061DB264E300A0CF98 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 302A4C051DB264E300A0CF98 /* DetailViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +24,8 @@
 		302A4BF81DAD592900A0CF98 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		302A4BFB1DAD592900A0CF98 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		302A4BFD1DAD592900A0CF98 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		302A4C031DB2529C00A0CF98 /* HomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
+		302A4C051DB264E300A0CF98 /* DetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +60,8 @@
 			children = (
 				302A4BF11DAD592900A0CF98 /* AppDelegate.swift */,
 				302A4BF31DAD592900A0CF98 /* ViewController.swift */,
+				302A4C051DB264E300A0CF98 /* DetailViewController.swift */,
+				302A4C031DB2529C00A0CF98 /* HomeViewController.swift */,
 				302A4BF51DAD592900A0CF98 /* Main.storyboard */,
 				302A4BF81DAD592900A0CF98 /* Assets.xcassets */,
 				302A4BFA1DAD592900A0CF98 /* LaunchScreen.storyboard */,
@@ -96,6 +102,7 @@
 				TargetAttributes = {
 					302A4BED1DAD592900A0CF98 = {
 						CreatedOnToolsVersion = 8.0;
+						DevelopmentTeam = B95A6DKU56;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -138,6 +145,8 @@
 			files = (
 				302A4BF41DAD592900A0CF98 /* ViewController.swift in Sources */,
 				302A4BF21DAD592900A0CF98 /* AppDelegate.swift in Sources */,
+				302A4C041DB2529D00A0CF98 /* HomeViewController.swift in Sources */,
+				302A4C061DB264E300A0CF98 /* DetailViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -260,6 +269,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = B95A6DKU56;
 				INFOPLIST_FILE = TheAPIAwakens/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.safwat.TheAPIAwakens;
@@ -272,6 +282,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = B95A6DKU56;
 				INFOPLIST_FILE = TheAPIAwakens/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.safwat.TheAPIAwakens;
