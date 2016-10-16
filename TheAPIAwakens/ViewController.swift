@@ -30,51 +30,6 @@ class ViewController: UIViewController , UIPickerViewDelegate, UIPickerViewDataS
     
     @IBAction func testApi() {
     
-        
-        let url = URL(string: "http://swapi.co/api/planets/\(selectedNumer)/")
-        let urlRequest = URLRequest(url: url!)
-        let config = URLSessionConfiguration.default
-        config.timeoutIntervalForRequest = 5
-        let session = URLSession(configuration: config)
-        let task = session.dataTask(with: urlRequest) {
-            data, response, error in
-        
-            guard let response = response as? HTTPURLResponse else {
-                
-                let userInfo = [NSLocalizedDescriptionKey: NSLocalizedString("Missing HTTP Response", comment: "")
-                ]
-                let error = NSError(domain: NetworkingErrorDomain, code: MissingHTTPResponseError, userInfo: userInfo)
-                return
-            }
-            print ("Response Sttus code-->  \(response.statusCode)")
-            print ("error -->  \(error?.localizedDescription)")
-            
-            if let data = data { print ("data -->  \(data)")
-            
-        do
-        {
-            let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String : AnyObject]
-            print("json: --> \(json)")
-            var displayText = ""
-            if let name =  json?["name"] as? String {
-                displayText += "\(name)\n"
-            }
-            if let films = json?["films"] as? [String] {
-                for film in films {
-                    displayText += "\(film)\n"
-                }
-            }
-            DispatchQueue.main.async {
-                self.textView.text = displayText
-            }
-            
-        } catch let error as NSError{
-         print("Error for Json: -->  \(error)")
-        }
-        }
-        }
-        task.resume()
-        
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {

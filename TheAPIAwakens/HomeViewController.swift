@@ -27,14 +27,28 @@ class HomeViewController: UIViewController {
 
     
     
-    /*
-    // MARK: - Navigation
+     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
+        if let id = segue.identifier {
+            if let vc = segue.destination as? DetailViewController {
+                switch id {
+                case "showPeople":
+                    vc.objectType = ObjectType.people
+                    vc.navigationItemText = "Characters"
+                case "showVehicles":
+                    vc.objectType = ObjectType.vehicles
+                    vc.navigationItemText = "Vehicles"
+                case "showStarships":
+                    vc.objectType = ObjectType.starships
+                    vc.navigationItemText = "Starships"
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+                
+                default:
+                    break
+                }
+            }
+        }
     }
-    */
+    
 
 }
