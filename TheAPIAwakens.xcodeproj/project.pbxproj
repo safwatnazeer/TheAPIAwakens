@@ -16,6 +16,7 @@
 		302A4C061DB264E300A0CF98 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 302A4C051DB264E300A0CF98 /* DetailViewController.swift */; };
 		302A4C091DB2C3D000A0CF98 /* Attributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 302A4C081DB2C3D000A0CF98 /* Attributes.swift */; };
 		306984311DB38FBE001C0C58 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 306984301DB38FBE001C0C58 /* APIClient.swift */; };
+		306984331DB419B7001C0C58 /* SwapiDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 306984321DB419B7001C0C58 /* SwapiDataModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,7 @@
 		302A4C051DB264E300A0CF98 /* DetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 		302A4C081DB2C3D000A0CF98 /* Attributes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Attributes.swift; sourceTree = "<group>"; };
 		306984301DB38FBE001C0C58 /* APIClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
+		306984321DB419B7001C0C58 /* SwapiDataModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwapiDataModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,6 +81,7 @@
 			isa = PBXGroup;
 			children = (
 				302A4C081DB2C3D000A0CF98 /* Attributes.swift */,
+				306984321DB419B7001C0C58 /* SwapiDataModel.swift */,
 				306984301DB38FBE001C0C58 /* APIClient.swift */,
 			);
 			name = Model;
@@ -157,6 +160,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				306984331DB419B7001C0C58 /* SwapiDataModel.swift in Sources */,
 				302A4BF41DAD592900A0CF98 /* ViewController.swift in Sources */,
 				302A4BF21DAD592900A0CF98 /* AppDelegate.swift in Sources */,
 				302A4C041DB2529D00A0CF98 /* HomeViewController.swift in Sources */,

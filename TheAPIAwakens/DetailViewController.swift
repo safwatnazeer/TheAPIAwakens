@@ -63,8 +63,12 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
     
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
-    // global status
+    //  status
     var stillDownloading = false
+    
+    // API Client object
+    var apiClient: SwapiClient?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -75,14 +79,16 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
         
         // Field map
         setupFieldMap()
+       
         
         // Data Download
+        apiClient = SwapiClient(objectType: objectType!)
         allPeople.removeAll()
         activityIndicator.startAnimating()
         
         if !stillDownloading {
             stillDownloading = true
-            downloadJson(objectType: objectType!)
+            apiClient?.downloadJson()
         }
         handlerAfterGettingAllData =
         {
@@ -90,9 +96,12 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
                 self.activityIndicator.stopAnimating()
                 self.stillDownloading = false
                 self.pickerView.reloadAllComponents()
+                if allPeople.count > 0 { self.displayInfo(row: 0)}
             }
         }
-                
+        
+        // display field names only
+        displayInfo(row: 0)
     }
         
     
@@ -158,24 +167,26 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
     // MARK: Display Info
     func displayInfo(row: Int) {
         
-        
-        let currentObject = allPeople[row]
-        
-        let name = currentObject["name"] as? String
-        mainEntityLabel.text = name
-        
+        // display field abels only
+        mainEntityLabel.text = ""
         let currentFieldMap = fieldsMap[objectType!]
         for field in currentFieldMap! {
             field.nameLabel.text = field.displayName
-            if let jsonData = currentObject[field.jsonName.rawValue] as? String {
-                field.contentLabel.text = jsonData
-            }
-            
+            field.contentLabel.text = ""
         }
-        
-        
+        // display content when download is finished
+        if !stillDownloading {
+            let currentObject = allPeople[row]
+            let name = currentObject["name"] as? String
+            mainEntityLabel.text = name
+            for field in currentFieldMap! {
+                field.nameLabel.text = field.displayName
+                if let jsonData = currentObject[field.jsonName.rawValue] as? String {
+                    field.contentLabel.text = jsonData
+                }
+            }
+        }
     }
-    
     
 }
 
