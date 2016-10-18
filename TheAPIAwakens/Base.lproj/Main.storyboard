@@ -77,7 +77,9 @@
                             <constraint firstItem="Djt-QG-UZv" firstAttribute="leading" secondItem="xLH-hK-BPm" secondAttribute="leading" id="f0o-V4-oEw"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="B6B-mJ-nn2"/>
+                    <navigationItem key="navigationItem" id="B6B-mJ-nn2">
+                        <barButtonItem key="backBarButtonItem" title=" " id="Rah-SF-jFH"/>
+                    </navigationItem>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="o64-Sm-BUH" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -96,12 +98,12 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="Msi-ZB-U8e">
-                                <color key="backgroundColor" red="0.80000000000000004" green="0.80000000000000004" blue="0.80000000000000004" alpha="0.32987607758620691" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" red="0.90196079019999997" green="0.90196079019999997" blue="0.90196079019999997" alpha="0.55781250000000004" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="100" id="0Ot-QL-gyS"/>
                                     <constraint firstAttribute="height" constant="100" id="Kd4-QZ-G0a"/>
                                 </constraints>
-                                <color key="color" red="0.59999999999999998" green="0.59999999999999998" blue="0.59999999999999998" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="color" cocoaTouchSystemColor="darkTextColor"/>
                             </activityIndicatorView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Entrity Name" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZiW-GL-Lxi">
                                 <constraints>

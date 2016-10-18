@@ -80,6 +80,7 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
         super.viewDidLoad()
         
         self.navigationItem.title = navigationItemText
+        
         // picker view
         pickerView.delegate = self
         pickerView.dataSource = self
