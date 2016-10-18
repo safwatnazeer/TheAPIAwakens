@@ -8,8 +8,6 @@
 
 import UIKit
 
-public let NetworkingErrorDomain = "com.safwat.TheAPIAwaken.NetworkingError"
-public let MissingHTTPResponseError = 10
 
 class ViewController: UIViewController , UIPickerViewDelegate, UIPickerViewDataSource , URLSessionDelegate{
 

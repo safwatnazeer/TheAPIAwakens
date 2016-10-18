@@ -53,6 +53,8 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
     @IBOutlet weak var entityInfoFieldContent4: UILabel!
     @IBOutlet weak var entityInfoFieldContent5: UILabel!
     
+    // Label for samllest and argest
+    @IBOutlet weak var smallestAndLargest: UILabel!
     
     
     // Field map
@@ -67,7 +69,11 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
     var stillDownloading = false
     
     // API Client object
-    var apiClient: SwapiClient?
+    var dataManager : SwapiDataManager?
+
+    //var data = [JSONResult]()
+
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -80,30 +86,33 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
         // Field map
         setupFieldMap()
        
-        
         // Data Download
-        apiClient = SwapiClient(objectType: objectType!)
-        allPeople.removeAll()
+        activityIndicator.layer.cornerRadius = 5.0
         activityIndicator.startAnimating()
-        
+    
         if !stillDownloading {
             stillDownloading = true
-            apiClient?.downloadJson()
-        }
-        handlerAfterGettingAllData =
-        {
-            DispatchQueue.main.async {
-                self.activityIndicator.stopAnimating()
-                self.stillDownloading = false
-                self.pickerView.reloadAllComponents()
-                if allPeople.count > 0 { self.displayInfo(row: 0)}
+            dataManager?.loadData(objectType:objectType!) {
+                
+                DispatchQueue.main.async {
+                    self.activityIndicator.stopAnimating()
+                    self.stillDownloading = false
+                    if let dataManager = self.dataManager {
+                        if dataManager.isThereData() {
+                           // self.data = self.dataManager.objectData
+                            self.displayInfo(row: 0)
+                        }
+                            self.pickerView.reloadAllComponents()
+                    }
+            
+                }
             }
         }
         
         // display field names only
         displayInfo(row: 0)
+    
     }
-        
     
     
     func setupFieldMap() {
@@ -144,7 +153,13 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
         if stillDownloading {
             return 0
         } else {
-            return allPeople.count
+                if let dataManager = self.dataManager {
+                    return dataManager.dataCount()
+                }
+                else {
+                    return 0
+                }
+            
         }
     }
     
@@ -153,10 +168,12 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
     }
     
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        
-        let person = allPeople[row]
-        let name = person["name"] as? String
-        return name
+
+        if let person = dataManager?.dataRow(row: row)
+        { let name = person["name"] as? String
+            return name
+        }
+        return nil
     }
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         
@@ -176,17 +193,26 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
         }
         // display content when download is finished
         if !stillDownloading {
-            let currentObject = allPeople[row]
-            let name = currentObject["name"] as? String
-            mainEntityLabel.text = name
-            for field in currentFieldMap! {
-                field.nameLabel.text = field.displayName
-                if let jsonData = currentObject[field.jsonName.rawValue] as? String {
-                    field.contentLabel.text = jsonData
+            if let currentObject = dataManager?.dataRow(row: row) {
+                let name = currentObject["name"] as? String
+                mainEntityLabel.text = name
+                for field in currentFieldMap! {
+                    field.nameLabel.text = field.displayName
+                    if let jsonData = currentObject[field.jsonName.rawValue] as? String {
+                        field.contentLabel.text = jsonData
+                    }
                 }
+            }
+        
+        // show smallest and largest
+            if let dataManager = self.dataManager {
+            let (smallest, largest) = dataManager.getSmallestAndLargest()
+            smallestAndLargest.text = " Smallest  \(smallest)\n Largest  \(largest)"
+            
             }
         }
     }
+    
     
 }
 

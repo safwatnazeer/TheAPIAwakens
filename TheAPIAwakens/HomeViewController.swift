@@ -13,6 +13,7 @@ class HomeViewController: UIViewController {
     
     @IBOutlet weak var button: UIButton!
     
+    let dataManager = SwapiDataManager()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,13 +36,15 @@ class HomeViewController: UIViewController {
                 case "showPeople":
                     vc.objectType = ObjectType.people
                     vc.navigationItemText = "Characters"
+                    vc.dataManager = dataManager
                 case "showVehicles":
                     vc.objectType = ObjectType.vehicles
                     vc.navigationItemText = "Vehicles"
+                    vc.dataManager = dataManager
                 case "showStarships":
                     vc.objectType = ObjectType.starships
                     vc.navigationItemText = "Starships"
-
+                    vc.dataManager = dataManager
                 
                 default:
                     break

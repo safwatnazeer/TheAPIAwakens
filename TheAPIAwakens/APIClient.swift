@@ -8,19 +8,21 @@
 
 import Foundation
 
-typealias JSONResult = [String:AnyObject]
-typealias Handler = () -> Void
+public let NetworkingErrorDomain = "com.safwat.TheAPIAwaken.NetworkingError"
+public let MissingHTTPResponseError = 10
 
-var allPeople = [JSONResult]()
-var handlerAfterGettingAllData : Handler? = nil
 
-protocol APIClient {
-    var objectType : ObjectType {get}
-  // var configuration: URLSessionConfiguration { get }
-  // var session: URLSession { get }
-}
-extension APIClient {
-    func downloadJson() {
+
+
+class APIClient {
+    
+   private var objectData : [JSONResult]
+      init()
+    {
+        self.objectData = [JSONResult]()
+    }
+
+    func downloadJson(objectType : ObjectType, completionHandler: @escaping JsonHandler) {
         //let baseURL = URL(string: "http://swapi.co/api/")
         
         //let typeToDownload = "\(objectType.rawValue)/"
@@ -31,6 +33,7 @@ extension APIClient {
         let config = URLSessionConfiguration.default
         config.timeoutIntervalForRequest = 5
         let session = URLSession(configuration: config)
+        
         
         /*
         let task = session.dataTask(with: urlRequest) {
@@ -62,13 +65,10 @@ extension APIClient {
         let nextPageUrl = "http://swapi.co/api/\(objectType.rawValue)/"
         //var json: JSONResult = [:]
         
-        getNextPage(urlString: nextPageUrl, session: session)
+        getNextPage(urlString: nextPageUrl, session: session, completionHandler: completionHandler)
     }
 
-
-
-
-    func getNextPage(urlString: String, session: URLSession ) {
+    func getNextPage(urlString: String, session: URLSession , completionHandler: @escaping JsonHandler) {
         
         let url = URL(string: urlString)
         let task = session.dataTask(with: url!) { data, response, error in
@@ -77,17 +77,17 @@ extension APIClient {
             
             if let nextPage = json?["next"] as? String {
                 print(nextPage)
-                if let people = json?["results"] as? [[String:AnyObject]] {
-                    for person in people {
-                        allPeople.append(person)
+                if let results = json?["results"] as? [[String:AnyObject]] {
+                    for result in results {
+                        self.objectData.append(result)
                     }
                 }
-                self.getNextPage(urlString: nextPage, session: session)
+                self.getNextPage(urlString: nextPage, session: session, completionHandler: completionHandler)
                 
             }
             else {
                 print("That was last one ---- ")
-                handlerAfterGettingAllData!()
+                completionHandler(self.objectData)
             }
             
         }
