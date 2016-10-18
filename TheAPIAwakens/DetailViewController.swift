@@ -55,6 +55,7 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
     
     // Label for samllest and argest
     @IBOutlet weak var smallestAndLargest: UILabel!
+    @IBOutlet weak var smallestAndLargestFieldName: UILabel!
     
     
     // Field map
@@ -207,7 +208,9 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
         // show smallest and largest
             if let dataManager = self.dataManager {
             let (smallest, largest) = dataManager.getSmallestAndLargest()
-            smallestAndLargest.text = " Smallest  \(smallest)\n Largest  \(largest)"
+            
+                smallestAndLargestFieldName.text = "  Smallest\n  Largest"
+                smallestAndLargest.text = "\(smallest)\n\(largest)"
             
             }
         }
