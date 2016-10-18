@@ -103,8 +103,10 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
                         if dataManager.isThereData() {
                            // self.data = self.dataManager.objectData
                             self.displayInfo(row: 0)
+                            
                         }
                             self.pickerView.reloadAllComponents()
+                        
                     }
             
                 }
@@ -114,6 +116,8 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
         // display field names only
         displayInfo(row: 0)
     
+        
+        
     }
     
     
@@ -184,8 +188,8 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
     
     
     // MARK: Display Info
-    func displayInfo(row: Int) {
-        
+    func displayInfo(row: Int)
+    {
         // display field abels only
         mainEntityLabel.text = ""
         let currentFieldMap = fieldsMap[objectType!]
@@ -195,13 +199,15 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
         }
         // display content when download is finished
         if !stillDownloading {
-            if let currentObject = dataManager?.dataRow(row: row) {
-                let name = currentObject["name"] as? String
+            if let parsedData = dataManager?.parseJSON(objectType: self.objectType!, index: row) {
+                let name = parsedData[0].fieldData  // always name is the first returned field
                 mainEntityLabel.text = name
-                for field in currentFieldMap! {
-                    field.nameLabel.text = field.displayName
-                    if let jsonData = currentObject[field.jsonName.rawValue] as? String {
-                        field.contentLabel.text = jsonData
+                for uiField in currentFieldMap! {
+                    uiField.nameLabel.text = uiField.displayName
+                    for dataField in parsedData {
+                        if dataField.fieldName == uiField.jsonName {
+                            uiField.contentLabel.text = dataField.fieldData
+                        }
                     }
                 }
             }

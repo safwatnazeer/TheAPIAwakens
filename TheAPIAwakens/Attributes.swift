@@ -16,6 +16,15 @@ enum ObjectType: String {
     case vehicles
     case starships
     
+    var fields: [Field]  {
+        switch self {
+        case .people: return [.name,.birthYear,.homeWorld, .height, .eyeColor,.hairColor]
+        case .vehicles: return[.name, .make,.cost,.length,.vehicleClass,.crew]
+        case .starships: return [.name, .make,.cost,.length,.starshipClass,.crew]
+        }
+        
+    }
+    
 }
 
 enum Field: String {

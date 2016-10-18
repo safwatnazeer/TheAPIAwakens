@@ -8,18 +8,28 @@
 
 import Foundation
 
-typealias JSONResult = [String:AnyObject]
-typealias JsonHandler = ([JSONResult]) -> Void
+typealias JSONDictionary = [String:AnyObject]
+typealias HandlerWithJSONDictionary = (JSONDictionary) -> Void
 typealias Handler = () -> Void
+typealias HandlerWithArrayJSONDictionary = ([JSONDictionary]) -> Void
+
+struct ParsedField {
+    let fieldName : Field
+    let fieldData: String
+}
+
+struct ParsedData {
+    let recordData : [ParsedField]
+}
 
 class SwapiDataManager {
     
-    private var objectData  : [JSONResult]
+    private var objectData  : [JSONDictionary]
     private var lastObjectTypeLoaded: ObjectType?
     
   
     init() {
-        self.objectData = [JSONResult]()
+        self.objectData = [JSONDictionary]()
         lastObjectTypeLoaded = nil
     }
     
@@ -37,11 +47,11 @@ class SwapiDataManager {
             objectData.removeAll()
             self.lastObjectTypeLoaded = objectType // TODO: what if load failed ?? Fix it
             let apiClient = APIClient()
-            apiClient.downloadJson(objectType: objectType) {
+            apiClient.downloadData(objectType: objectType) {
                 data in
-                print("data is loaded .. ")
-                self.objectData = data
-                
+                    print("data is loaded .. ")
+                    self.objectData = data
+                    
                 completionHandler()
             
             }
@@ -60,7 +70,7 @@ class SwapiDataManager {
         return objectData.count
     }
     
-    func dataRow(row: Int) -> JSONResult {
+    func dataRow(row: Int) -> JSONDictionary {
         return objectData[row]
     }
     
@@ -70,10 +80,10 @@ class SwapiDataManager {
         // decide which field will be used for size based on object type
         var sizeField : Field
         switch lastObjectTypeLoaded! {
-        case .people:
-            sizeField = .height
-        case .starships, .vehicles:
-            sizeField = .length
+            case .people:
+                sizeField = .height
+            case .starships, .vehicles:
+                sizeField = .length
         }
         
         // get only name and size in an array of tuples
@@ -110,4 +120,19 @@ class SwapiDataManager {
         }
     }
     
+    func parseJSON(objectType: ObjectType, index: Int) -> [ParsedField]
+    {
+        
+        let fieldsList = objectType.fields
+        let record = objectData[index]
+        var recordData = [ParsedField]()
+        for currentField in fieldsList {
+            let parsedField = ParsedField(fieldName: currentField, fieldData: record[currentField.rawValue] as! String)
+            recordData.append(parsedField)
+        }
+        print(recordData)
+        return recordData
+        
+    }
+
 }
