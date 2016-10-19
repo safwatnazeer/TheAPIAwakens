@@ -12,7 +12,13 @@ public let NetworkingErrorDomain = "com.safwat.TheAPIAwaken.NetworkingError"
 public let MissingHTTPResponseError = 10
 
 
-
+struct DownloadRequest{
+    
+    let urls : [String]
+    let nextPageJSONKeyword: String?
+    let resultExtractJSONKeyword: String
+    
+}
 
 class APIClient {
     
@@ -25,17 +31,34 @@ class APIClient {
     }
 
     func downloadData(objectType : ObjectType, completionHandler: @escaping HandlerWithArrayJSONDictionary) {
-       
-        
-        //let config = URLSessionConfiguration.default
+         //let config = URLSessionConfiguration.default
         //config.timeoutIntervalForRequest = 5
-        
-        
-        let url = "http://swapi.co/api/\(objectType.rawValue)/"
-         getNextPage(urlString: url, completionHandler: completionHandler)
+         let url = "http://swapi.co/api/\(objectType.rawValue)/"
+         downloadDataWithMultiPages(urlString: url, completionHandler: completionHandler)
     }
 
-    func getNextPage(urlString: String, completionHandler: @escaping HandlerWithArrayJSONDictionary)
+    
+    
+    func downloadDataWithMultiURLS(request: DownloadRequest,  completionHandler: @escaping ([String]) -> Void ){
+        
+        var tempData = [String]()
+        var remainingDownloadTasks = request.urls.count
+        
+        for url in request.urls {
+            downloadJSON(urlString: url ) {
+                jsonData in
+                remainingDownloadTasks -= 1
+                if let result = jsonData[request.resultExtractJSONKeyword] as? String
+                {
+                    tempData.append(result)
+                    if remainingDownloadTasks == 0 { completionHandler(tempData)}
+                }
+            }
+        }
+    
+    }
+   
+    func downloadDataWithMultiPages(urlString: String, completionHandler: @escaping HandlerWithArrayJSONDictionary)
     {
         
         downloadJSON(urlString: urlString) {
@@ -48,7 +71,7 @@ class APIClient {
                         self.objectData.append(result)
                     }
                 }
-                self.getNextPage(urlString: nextPage, completionHandler: completionHandler)
+                self.downloadDataWithMultiPages(urlString: nextPage, completionHandler: completionHandler)
             }
             else {
                 print("That was the last one ---- ")
@@ -63,7 +86,7 @@ class APIClient {
             // TODO: implement error handeling for JSON Downaloder
             
             guard let response = response as? HTTPURLResponse else {
-                print("Missing HttpResponse .. ")
+                print("Missing Http Response .. ")
                 return
             }
             print ("Response Sttus code-->  \(response.statusCode)")
@@ -98,11 +121,5 @@ class APIClient {
  
  if let data = data { print ("data -->  \(data)")
  
- var json = try JSONSerialization.jsonObject(with: data, options: []) as? [String : AnyObject]
- print(json)
- //let results = json?["results"] as! [[String:AnyObject]]
- for result in results {
- let name:String = result["name"] as! String
- print(name)
- }
+  }
  */

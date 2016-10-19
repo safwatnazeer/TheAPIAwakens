@@ -217,14 +217,29 @@
                                     </stackView>
                                 </subviews>
                             </stackView>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text="Vehicles and starships ... " textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6N0-Bt-xKK">
+                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="nwC-si-bJZ" userLabel="Starships-VehiclesSV">
+                                <subviews>
+                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text="Vehicles ... " selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6N0-Bt-xKK">
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="70" id="Nkr-u7-Wsm"/>
+                                        </constraints>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                        <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                    </textView>
+                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text="Starships " selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1Af-kX-taI">
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="70" id="T6M-Sm-iii"/>
+                                        </constraints>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                        <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                    </textView>
+                                </subviews>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="70" id="Nkr-u7-Wsm"/>
+                                    <constraint firstAttribute="height" constant="70" id="ahc-YG-Z4E"/>
                                 </constraints>
-                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
-                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                            </textView>
+                            </stackView>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="AOG-zT-RKH" userLabel="pickerSV">
                                 <subviews>
                                     <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Yri-7k-pdZ">
@@ -259,18 +274,18 @@
                         <constraints>
                             <constraint firstItem="Msi-ZB-U8e" firstAttribute="centerY" secondItem="nbb-mz-gRv" secondAttribute="centerY" id="22A-qq-wXP"/>
                             <constraint firstAttribute="trailing" secondItem="iew-Tm-BGr" secondAttribute="trailing" id="44R-YJ-bdL"/>
-                            <constraint firstItem="6N0-Bt-xKK" firstAttribute="top" secondItem="dNN-tF-a3D" secondAttribute="bottom" constant="5" id="EJS-t0-p6J"/>
                             <constraint firstItem="eSA-E2-yWC" firstAttribute="top" secondItem="iew-Tm-BGr" secondAttribute="bottom" id="IK4-GK-LWO"/>
                             <constraint firstItem="iew-Tm-BGr" firstAttribute="leading" secondItem="nbb-mz-gRv" secondAttribute="leading" id="In3-Y3-1ku"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="6N0-Bt-xKK" secondAttribute="trailing" id="Pa3-pV-i53"/>
+                            <constraint firstAttribute="trailing" secondItem="nwC-si-bJZ" secondAttribute="trailing" constant="10" id="J2H-Oi-SDm"/>
+                            <constraint firstItem="nwC-si-bJZ" firstAttribute="top" secondItem="dNN-tF-a3D" secondAttribute="bottom" constant="5" id="Qxp-oA-ihI"/>
                             <constraint firstAttribute="trailing" secondItem="ZiW-GL-Lxi" secondAttribute="trailing" id="U1a-uO-Gjq"/>
                             <constraint firstItem="dNN-tF-a3D" firstAttribute="top" secondItem="ZiW-GL-Lxi" secondAttribute="bottom" constant="5" id="U52-Ne-SsG"/>
+                            <constraint firstItem="AOG-zT-RKH" firstAttribute="top" secondItem="nwC-si-bJZ" secondAttribute="bottom" constant="10" id="ZRv-dk-Cht"/>
                             <constraint firstItem="AOG-zT-RKH" firstAttribute="leading" secondItem="nbb-mz-gRv" secondAttribute="leading" id="aDP-8d-5zX"/>
                             <constraint firstAttribute="trailing" secondItem="AOG-zT-RKH" secondAttribute="trailing" id="byh-8e-Bxs"/>
                             <constraint firstItem="dNN-tF-a3D" firstAttribute="leading" secondItem="nbb-mz-gRv" secondAttribute="leadingMargin" id="coT-QN-GDr"/>
                             <constraint firstItem="Msi-ZB-U8e" firstAttribute="centerX" secondItem="nbb-mz-gRv" secondAttribute="centerX" id="giH-Uw-0tY"/>
-                            <constraint firstItem="6N0-Bt-xKK" firstAttribute="leading" secondItem="nbb-mz-gRv" secondAttribute="leadingMargin" id="kr4-To-MXm"/>
-                            <constraint firstItem="AOG-zT-RKH" firstAttribute="top" secondItem="6N0-Bt-xKK" secondAttribute="bottom" constant="10" id="m3I-wM-Rfp"/>
+                            <constraint firstItem="nwC-si-bJZ" firstAttribute="leading" secondItem="nbb-mz-gRv" secondAttribute="leading" constant="10" id="gr2-hK-nF9"/>
                             <constraint firstAttribute="trailingMargin" secondItem="dNN-tF-a3D" secondAttribute="trailing" id="pyw-mR-TlY"/>
                             <constraint firstItem="ZiW-GL-Lxi" firstAttribute="leading" secondItem="nbb-mz-gRv" secondAttribute="leading" id="r9X-9l-TXd"/>
                             <constraint firstItem="ZiW-GL-Lxi" firstAttribute="top" secondItem="iYl-zp-fox" secondAttribute="bottom" id="xmT-5R-qZO"/>
@@ -291,7 +306,8 @@
                         <outlet property="entityInfoFieldContent5" destination="epq-Q7-GYt" id="okk-TX-7b0"/>
                         <outlet property="mainEntityLabel" destination="ZiW-GL-Lxi" id="kEb-sT-Esc"/>
                         <outlet property="pickerView" destination="Yri-7k-pdZ" id="9TK-cd-7p4"/>
-                        <outlet property="relatedItemsTextView" destination="6N0-Bt-xKK" id="DD6-IK-IzF"/>
+                        <outlet property="relatedStarships" destination="1Af-kX-taI" id="SZg-5e-KPC"/>
+                        <outlet property="relatedVehicles" destination="6N0-Bt-xKK" id="UI5-hR-IxL"/>
                         <outlet property="smallestAndLargest" destination="uc0-vk-cO2" id="4En-ld-eft"/>
                         <outlet property="smallestAndLargestFieldName" destination="gvA-Yp-jW1" id="fTl-s7-6e4"/>
                     </connections>

@@ -18,9 +18,9 @@ struct ParsedField {
     let fieldData: String
 }
 
-struct ParsedData {
-    let recordData : [ParsedField]
-}
+//struct ParsedData {
+//    let recordData : [ParsedField]
+//}
 
 class SwapiDataManager {
     
@@ -135,32 +135,29 @@ class SwapiDataManager {
         
     }
     
-    func downloadRelatedData(objectType: ObjectType, field: Field,index: Int,  completionHandler:@escaping ([String]?) -> Void ) {
+    func getRelatedData(objectType: ObjectType, field: Field,index: Int,  completionHandler:@escaping ([String]?) -> Void ) {
     
         if objectType != .people  { completionHandler(nil) }
         
-        var listOfRealtedItemsNames = [String]()
+        
         let record = objectData[index]
         // TODO: error handling if value is missing
-        if let listOfRelatedItems = record[field.rawValue] as? [String]
+        if let urlsRelatedItems = record[field.rawValue] as? [String]
         {
-            print(listOfRelatedItems)
-            var remainingDownloadTasks = listOfRelatedItems.count
+            print(urlsRelatedItems)
+            
             let apiClient = APIClient()
-            for itemURL in listOfRelatedItems {
-                apiClient.downloadJSON(urlString: itemURL ) {
-                    jsonData in
-                    remainingDownloadTasks -= 1
-                   //print(jsonData[Field.name.rawValue])
-                    if let name = jsonData[Field.name.rawValue] as? String
-                    {
-                      listOfRealtedItemsNames.append(name)
-                        if remainingDownloadTasks == 0 { completionHandler(listOfRealtedItemsNames)}
-                    }
-                }
+            let request = DownloadRequest(urls: urlsRelatedItems, nextPageJSONKeyword: nil, resultExtractJSONKeyword: Field.name.rawValue)
+            apiClient.downloadDataWithMultiURLS(request: request) {
+                data in
+                completionHandler(data)
             }
         }
         
     }
 
 }
+
+
+
+

@@ -57,8 +57,9 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
     @IBOutlet weak var smallestAndLargest: UILabel!
     @IBOutlet weak var smallestAndLargestFieldName: UILabel!
     
-    // textView
-    @IBOutlet weak var relatedItemsTextView: UITextView!
+    // TextView
+    @IBOutlet weak var relatedStarships: UITextView!
+    @IBOutlet weak var relatedVehicles: UITextView!
     
     
     // Field map
@@ -195,7 +196,8 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
     {
         // display field abels only
         mainEntityLabel.text = ""
-        relatedItemsTextView.text = ""
+        relatedVehicles.text = ""
+        relatedStarships.text = ""
         let currentFieldMap = fieldsMap[objectType!]
         for field in currentFieldMap! {
             field.nameLabel.text = field.displayName
@@ -230,28 +232,32 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
     }
     
     func showRelatedData(row: Int) {
+        relatedStarships.isHidden = true
+        relatedVehicles.isHidden = true
+        
         if let dataManager = self.dataManager {
-        dataManager.downloadRelatedData(objectType: objectType! , field: .vehicles ,index: row)
+        dataManager.getRelatedData(objectType: objectType! , field: .vehicles ,index: row)
         {
             vehicles in
             if let vehicles = vehicles {
-            DispatchQueue.main.async {
-                var text = self.relatedItemsTextView.text + "\nVehicles:\n"
-                for v in vehicles { text += "\(v)\n"}
-                self.relatedItemsTextView.text = text
-            }
+                DispatchQueue.main.async {
+                    var text = "Vehicles:\n"
+                    for v in vehicles { text += "-\(v)\n"}
+                    self.relatedVehicles.text = text
+                    self.relatedVehicles.isHidden = false
+                }
             }
         }
         
-        dataManager.downloadRelatedData(objectType: objectType! , field:.starships ,index: row) {
+        dataManager.getRelatedData(objectType: objectType! , field:.starships ,index: row) {
             starships in
             if let starships = starships {
-            
-            DispatchQueue.main.async {
-                var text = self.relatedItemsTextView.text + "\nStarships:\n"
-                for v in starships { text += "\(v)\n"}
-                self.relatedItemsTextView.text = text
-            }
+                DispatchQueue.main.async {
+                    var text = "Starships:\n"
+                    for v in starships { text += "-\(v)\n"}
+                    self.relatedStarships.text = text
+                    self.relatedStarships.isHidden = false
+                }
             }
         }
         
