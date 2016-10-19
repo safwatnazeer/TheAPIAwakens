@@ -57,6 +57,9 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
     @IBOutlet weak var smallestAndLargest: UILabel!
     @IBOutlet weak var smallestAndLargestFieldName: UILabel!
     
+    // textView
+    @IBOutlet weak var relatedItemsTextView: UITextView!
+    
     
     // Field map
     var fieldsMap = [ObjectType:[dataField]]()
@@ -192,6 +195,7 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
     {
         // display field abels only
         mainEntityLabel.text = ""
+        relatedItemsTextView.text = ""
         let currentFieldMap = fieldsMap[objectType!]
         for field in currentFieldMap! {
             field.nameLabel.text = field.displayName
@@ -199,7 +203,7 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
         }
         // display content when download is finished
         if !stillDownloading {
-            if let parsedData = dataManager?.parseJSON(objectType: self.objectType!, index: row) {
+            if let parsedData = dataManager?.parseJSON(fieldsList: self.objectType!.fields, index: row) {
                 let name = parsedData[0].fieldData  // always name is the first returned field
                 mainEntityLabel.text = name
                 for uiField in currentFieldMap! {
@@ -220,14 +224,44 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
                 smallestAndLargest.text = "\(smallest)\n\(largest)"
             
             }
+        // show related data
+            showRelatedData(row:row)
         }
     }
     
+    func showRelatedData(row: Int) {
+        if let dataManager = self.dataManager {
+        dataManager.downloadRelatedData(objectType: objectType! , field: .vehicles ,index: row)
+        {
+            vehicles in
+            if let vehicles = vehicles {
+            DispatchQueue.main.async {
+                var text = self.relatedItemsTextView.text + "\nVehicles:\n"
+                for v in vehicles { text += "\(v)\n"}
+                self.relatedItemsTextView.text = text
+            }
+            }
+        }
+        
+        dataManager.downloadRelatedData(objectType: objectType! , field:.starships ,index: row) {
+            starships in
+            if let starships = starships {
+            
+            DispatchQueue.main.async {
+                var text = self.relatedItemsTextView.text + "\nStarships:\n"
+                for v in starships { text += "\(v)\n"}
+                self.relatedItemsTextView.text = text
+            }
+            }
+        }
+        
+        }
+        }
     
 }
 
-    
-   
-    
+
+
+
 
 

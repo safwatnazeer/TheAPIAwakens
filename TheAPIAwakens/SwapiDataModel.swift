@@ -111,7 +111,7 @@ class SwapiDataManager {
             in
             if first.1! < second.1! {return true} else {return false}
         }
-        print(orderedData)
+        
         // return data
         if let smallest = orderedData.first?.0, let largest = orderedData.last?.0 {
             return (smallest,largest )
@@ -120,18 +120,46 @@ class SwapiDataManager {
         }
     }
     
-    func parseJSON(objectType: ObjectType, index: Int) -> [ParsedField]
+    func parseJSON(fieldsList:[Field], index: Int) -> [ParsedField]
     {
         
-        let fieldsList = objectType.fields
+       
         let record = objectData[index]
         var recordData = [ParsedField]()
         for currentField in fieldsList {
             let parsedField = ParsedField(fieldName: currentField, fieldData: record[currentField.rawValue] as! String)
             recordData.append(parsedField)
         }
-        print(recordData)
+     //   print(recordData)
         return recordData
+        
+    }
+    
+    func downloadRelatedData(objectType: ObjectType, field: Field,index: Int,  completionHandler:@escaping ([String]?) -> Void ) {
+    
+        if objectType != .people  { completionHandler(nil) }
+        
+        var listOfRealtedItemsNames = [String]()
+        let record = objectData[index]
+        // TODO: error handling if value is missing
+        if let listOfRelatedItems = record[field.rawValue] as? [String]
+        {
+            print(listOfRelatedItems)
+            var remainingDownloadTasks = listOfRelatedItems.count
+            let apiClient = APIClient()
+            for itemURL in listOfRelatedItems {
+                apiClient.downloadJSON(urlString: itemURL ) {
+                    jsonData in
+                    remainingDownloadTasks -= 1
+                   //print(jsonData[Field.name.rawValue])
+                    if let name = jsonData[Field.name.rawValue] as? String
+                    {
+                      listOfRealtedItemsNames.append(name)
+                        if remainingDownloadTasks == 0 { completionHandler(listOfRealtedItemsNames)}
+                    }
+                }
+            }
+        }
         
     }
 

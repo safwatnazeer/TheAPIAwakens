@@ -217,12 +217,12 @@
                                     </stackView>
                                 </subviews>
                             </stackView>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="Vehicles and starships ... " textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="6N0-Bt-xKK">
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text="Vehicles and starships ... " textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6N0-Bt-xKK">
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="50" id="Nkr-u7-Wsm"/>
+                                    <constraint firstAttribute="height" constant="70" id="Nkr-u7-Wsm"/>
                                 </constraints>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="AOG-zT-RKH" userLabel="pickerSV">
@@ -291,6 +291,7 @@
                         <outlet property="entityInfoFieldContent5" destination="epq-Q7-GYt" id="okk-TX-7b0"/>
                         <outlet property="mainEntityLabel" destination="ZiW-GL-Lxi" id="kEb-sT-Esc"/>
                         <outlet property="pickerView" destination="Yri-7k-pdZ" id="9TK-cd-7p4"/>
+                        <outlet property="relatedItemsTextView" destination="6N0-Bt-xKK" id="DD6-IK-IzF"/>
                         <outlet property="smallestAndLargest" destination="uc0-vk-cO2" id="4En-ld-eft"/>
                         <outlet property="smallestAndLargestFieldName" destination="gvA-Yp-jW1" id="fTl-s7-6e4"/>
                     </connections>

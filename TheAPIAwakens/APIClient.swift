@@ -16,8 +16,10 @@ public let MissingHTTPResponseError = 10
 
 class APIClient {
     
-   private var objectData : [JSONDictionary]
-      init()
+    private var objectData : [JSONDictionary]
+    let session = URLSession(configuration: URLSessionConfiguration.default)
+    
+    init()
     {
         self.objectData = [JSONDictionary]()
     }
@@ -25,18 +27,18 @@ class APIClient {
     func downloadData(objectType : ObjectType, completionHandler: @escaping HandlerWithArrayJSONDictionary) {
        
         
-        let config = URLSessionConfiguration.default
-        config.timeoutIntervalForRequest = 5
-        let session = URLSession(configuration: config)
+        //let config = URLSessionConfiguration.default
+        //config.timeoutIntervalForRequest = 5
+        
         
         let url = "http://swapi.co/api/\(objectType.rawValue)/"
-         getNextPage(urlString: url, session: session, completionHandler: completionHandler)
+         getNextPage(urlString: url, completionHandler: completionHandler)
     }
 
-    func getNextPage(urlString: String, session: URLSession , completionHandler: @escaping HandlerWithArrayJSONDictionary)
+    func getNextPage(urlString: String, completionHandler: @escaping HandlerWithArrayJSONDictionary)
     {
         
-        downloadJSON(urlString: urlString, session: session) {
+        downloadJSON(urlString: urlString) {
             jsonData in
             
             if let nextPage = jsonData["next"] as? String {
@@ -46,27 +48,35 @@ class APIClient {
                         self.objectData.append(result)
                     }
                 }
-                self.getNextPage(urlString: nextPage, session: session, completionHandler: completionHandler)
+                self.getNextPage(urlString: nextPage, completionHandler: completionHandler)
             }
             else {
-                print("That was last one ---- ")
+                print("That was the last one ---- ")
                 completionHandler(self.objectData)
             }
         }
     }
     
-    func downloadJSON(urlString: String, session: URLSession , completionHandler: @escaping HandlerWithJSONDictionary) {
+    func downloadJSON(urlString: String, completionHandler: @escaping HandlerWithJSONDictionary) {
         let url = URL(string: urlString)
         let task = session.dataTask(with: url!) { data, response, error in
             // TODO: implement error handeling for JSON Downaloder
-            if let jsonData = try! JSONSerialization.jsonObject(with: data!, options: []) as? [String : AnyObject]
-            {
-                completionHandler(jsonData)
-            } else {
-                // TODO: Error can't convert data to JSON
-                print ("Error can't convert data to JSON")
-            }
             
+            guard let response = response as? HTTPURLResponse else {
+                print("Missing HttpResponse .. ")
+                return
+            }
+            print ("Response Sttus code-->  \(response.statusCode)")
+            print ("error -->  \(error?.localizedDescription)")
+            if let data = data {
+                if let jsonData = try! JSONSerialization.jsonObject(with: data, options: []) as? [String : AnyObject]
+                {
+                    completionHandler(jsonData)
+                } else {
+                    // TODO: Error can't convert data to JSON
+                    print ("Error can't convert data to JSON")
+                }
+            }
       }
         task.resume()
     }

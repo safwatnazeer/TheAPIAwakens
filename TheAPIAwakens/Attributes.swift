@@ -42,6 +42,8 @@ enum Field: String {
     case starshipClass = "starship_class"
     case crew
     case vehicleClass = "vehicle_class"
+    case vehicles
+    case starships
 }
 
 
