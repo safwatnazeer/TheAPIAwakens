@@ -172,7 +172,7 @@
                                                     </button>
                                                 </subviews>
                                                 <constraints>
-                                                    <constraint firstAttribute="width" relation="lessThanOrEqual" constant="75" id="Uad-35-Sf1"/>
+                                                    <constraint firstAttribute="width" relation="lessThanOrEqual" constant="80" id="Uad-35-Sf1"/>
                                                 </constraints>
                                             </stackView>
                                         </subviews>
@@ -195,6 +195,31 @@
                                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
+                                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillProportionally" translatesAutoresizingMaskIntoConstraints="NO" id="FEJ-oI-BYL" userLabel="MetricConversionSV">
+                                                <subviews>
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3NS-Wa-3RX">
+                                                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                                        <state key="normal" title="English">
+                                                            <color key="titleColor" red="0.50196081400000003" green="0.50196081400000003" blue="0.50196081400000003" alpha="1" colorSpace="calibratedRGB"/>
+                                                        </state>
+                                                        <connections>
+                                                            <action selector="convertUnits:" destination="fHF-wT-vAQ" eventType="touchUpInside" id="6Tw-ru-iVe"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FTg-Bk-Spj">
+                                                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                                        <state key="normal" title="Metric">
+                                                            <color key="titleColor" red="0.7019608021" green="0.7019608021" blue="0.7019608021" alpha="1" colorSpace="calibratedRGB"/>
+                                                        </state>
+                                                        <connections>
+                                                            <action selector="convertUnits:" destination="fHF-wT-vAQ" eventType="touchUpInside" id="WYl-NL-cDZ"/>
+                                                        </connections>
+                                                    </button>
+                                                </subviews>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" relation="lessThanOrEqual" constant="100" id="dio-wG-hvb"/>
+                                                </constraints>
+                                            </stackView>
                                         </subviews>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="30" id="IP9-Sl-b2z"/>
@@ -321,6 +346,7 @@
                         <outlet property="activityIndicator" destination="Msi-ZB-U8e" id="aaD-cl-EJ7"/>
                         <outlet property="conversionButtonSV" destination="mx7-79-keH" id="oQ7-07-RFC"/>
                         <outlet property="creditButton" destination="jd6-Ya-WPb" id="vwh-lV-lMn"/>
+                        <outlet property="englishButton" destination="3NS-Wa-3RX" id="FPn-iP-nbP"/>
                         <outlet property="entityInfoField1" destination="WOs-dk-KM7" id="nXg-4s-5GE"/>
                         <outlet property="entityInfoField2" destination="HM5-My-Fks" id="e5r-OS-FkT"/>
                         <outlet property="entityInfoField3" destination="GqY-YI-eE5" id="PpU-gr-EJb"/>
@@ -332,6 +358,7 @@
                         <outlet property="entityInfoFieldContent4" destination="KA0-jz-nkl" id="QKv-9h-GpQ"/>
                         <outlet property="entityInfoFieldContent5" destination="epq-Q7-GYt" id="okk-TX-7b0"/>
                         <outlet property="mainEntityLabel" destination="ZiW-GL-Lxi" id="kEb-sT-Esc"/>
+                        <outlet property="metricButton" destination="FTg-Bk-Spj" id="h6G-VM-QeJ"/>
                         <outlet property="pickerView" destination="Yri-7k-pdZ" id="9TK-cd-7p4"/>
                         <outlet property="relatedStarships" destination="1Af-kX-taI" id="SZg-5e-KPC"/>
                         <outlet property="relatedVehicles" destination="6N0-Bt-xKK" id="UI5-hR-IxL"/>

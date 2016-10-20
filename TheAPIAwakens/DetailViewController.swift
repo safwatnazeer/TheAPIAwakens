@@ -66,6 +66,9 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
     @IBOutlet weak var creditButton: UIButton!
     @IBOutlet weak var usdButton: UIButton!
     
+    @IBOutlet weak var englishButton: UIButton!
+    @IBOutlet weak var metricButton: UIButton!
+    
     
     
     // Field map
@@ -242,6 +245,9 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
                 showRelatedData(row:row) }
             else { showExchangeRate() }
         }
+        // highlight metric and english 
+        metricButton.setTitleColor(UIColor.white, for: .normal)
+        englishButton.setTitleColor(UIColor.gray, for: .normal)
     }
     
     func showRelatedData(row: Int) {
@@ -291,7 +297,8 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
         
         creditButton.setTitleColor(UIColor.white, for: .normal)
         usdButton.setTitleColor(UIColor.gray, for: .normal)
-    
+        
+        
         
         
     }
@@ -325,6 +332,43 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
         }
         }
     }
+    
+    @IBAction func convertUnits(_ sender: AnyObject) {
+        
+        let row = pickerView.selectedRow(inComponent: 0)
+        var sizeField: Field
+        switch objectType! {
+        case .people: sizeField = .height
+        case .starships, .vehicles:   sizeField = .length
+            
+        }
+        
+        if let size = dataManager?.parseJSON(fieldsList: [sizeField], index: row) {
+            let sizeData = size[0].fieldData
+            if let sizeValue = Double(sizeData){
+                if let sender = sender as? UIButton, let label = sender.titleLabel?.text {
+                    switch label{
+                    case "Metric":
+                        entityInfoFieldContent3.text = sizeData
+                        metricButton.setTitleColor(UIColor.white, for: .normal)
+                        englishButton.setTitleColor(UIColor.gray, for: .normal)
+                    case "English":
+                        metricButton.setTitleColor(UIColor.gray, for: .normal)
+                        englishButton.setTitleColor(UIColor.white, for: .normal)
+                        let conversionRate = 3.28
+                        let englishValue = sizeValue * conversionRate
+                        entityInfoFieldContent3.text = "\(englishValue)"
+                        
+                    default:
+                        break
+                    }
+                }
+            }
+        }
+    }
+    
+    
+    
     // MARK: text view delegates
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         if text == "\n" {
