@@ -16,7 +16,7 @@ struct dataField {
     let contentLabel: UILabel // uilabel to display feild content
 }
 
-class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewDataSource {
+class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewDataSource , UITextViewDelegate {
 
     
     
@@ -60,6 +60,12 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
     // TextView
     @IBOutlet weak var relatedStarships: UITextView!
     @IBOutlet weak var relatedVehicles: UITextView!
+    
+    // Conversion buttons
+    @IBOutlet weak var conversionButtonSV: UIStackView!
+    @IBOutlet weak var creditButton: UIButton!
+    @IBOutlet weak var usdButton: UIButton!
+    
     
     
     // Field map
@@ -116,6 +122,8 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
                 }
             }
         }
+        
+        
         
         // display field names only
         displayInfo(row: 0)
@@ -198,10 +206,12 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
         mainEntityLabel.text = ""
         relatedVehicles.text = ""
         relatedStarships.text = ""
+        // hide conversion buttons
+        conversionButtonSV.isHidden = true
         let currentFieldMap = fieldsMap[objectType!]
         for field in currentFieldMap! {
             field.nameLabel.text = field.displayName
-            field.contentLabel.text = ""
+            field.contentLabel.text = " "
         }
         // display content when download is finished
         if !stillDownloading {
@@ -227,7 +237,10 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
             
             }
         // show related data
-            showRelatedData(row:row)
+            if objectType == .people {
+                conversionButtonSV.isHidden = true
+                showRelatedData(row:row) }
+            else { showExchangeRate() }
         }
     }
     
@@ -263,6 +276,63 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
         
         }
         }
+    func showExchangeRate() {
+        
+        // reuse existing fields for exchange rate
+        relatedVehicles.text = "Exchange Rate =\nGalagtic credits to USD "
+        relatedVehicles.isHidden = false
+        
+        relatedStarships.text = "200.0"
+        relatedStarships.isHidden = false
+        relatedStarships.isEditable = true
+        relatedStarships.delegate = self
+        
+        conversionButtonSV.isHidden = false
+        
+        creditButton.setTitleColor(UIColor.white, for: .normal)
+        usdButton.setTitleColor(UIColor.gray, for: .normal)
+    
+        
+        
+    }
+    
+    @IBAction func convertCurrency(_ sender: AnyObject) {
+        
+        let row = pickerView.selectedRow(inComponent: 0)
+        
+        if let cost = dataManager?.parseJSON(fieldsList: [.cost], index: row) {
+        let costData = cost[0].fieldData
+        if let costValue = Double(costData){
+            if let sender = sender as? UIButton, let label = sender.titleLabel?.text {
+                switch label{
+                    case "Credits":
+                        entityInfoFieldContent2.text = costData
+                        creditButton.setTitleColor(UIColor.white, for: .normal)
+                        usdButton.setTitleColor(UIColor.gray, for: .normal)
+                    case "USD":
+                        creditButton.setTitleColor(UIColor.gray, for: .normal)
+                        usdButton.setTitleColor(UIColor.white, for: .normal)
+                        if let rateValue = Double(relatedStarships.text) {
+                        let costUSD = costValue/rateValue
+                        entityInfoFieldContent2.text = "\(costUSD)"
+                        } else {
+                            entityInfoFieldContent2.text = " "
+                    }
+                default:
+                    break
+                }
+            }
+        }
+        }
+    }
+    // MARK: text view delegates
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        if text == "\n" {
+            relatedStarships.resignFirstResponder()
+        }
+        return true
+    }
+    
     
 }
 
