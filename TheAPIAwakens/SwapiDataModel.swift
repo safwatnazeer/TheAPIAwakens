@@ -34,7 +34,7 @@ class SwapiDataManager {
     }
     
     
-    // Methid to load data through use of APIClient
+    // Method to load data through use of APIClient
     // Logic avoid reloading data if it is already laoded last time
     func loadData(objectType:ObjectType, completionHandler: @escaping Handler){
         
@@ -120,6 +120,7 @@ class SwapiDataManager {
         }
     }
     
+    
     func parseJSON(fieldsList:[Field], index: Int) -> [ParsedField]
     {
         
@@ -148,6 +149,26 @@ class SwapiDataManager {
             
             let apiClient = APIClient()
             let request = DownloadRequest(urls: urlsRelatedItems, nextPageJSONKeyword: nil, resultExtractJSONKeyword: Field.name.rawValue)
+            apiClient.downloadDataWithMultiURLS(request: request) {
+                data in
+                completionHandler(data)
+            }
+        }
+        
+    }
+    func getHomeWorld(objectType: ObjectType, field: Field,index: Int,  completionHandler:@escaping ([String]?) -> Void ) {
+        
+        if objectType != .people  { completionHandler(nil) }
+        
+        
+        let record = objectData[index]
+        // TODO: error handling if value is missing
+        if let urlsRelatedItems = record[field.rawValue] as? String
+        {
+            print(urlsRelatedItems)
+            
+            let apiClient = APIClient()
+            let request = DownloadRequest(urls: [urlsRelatedItems], nextPageJSONKeyword: nil, resultExtractJSONKeyword: Field.name.rawValue)
             apiClient.downloadDataWithMultiURLS(request: request) {
                 data in
                 completionHandler(data)

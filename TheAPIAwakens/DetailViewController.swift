@@ -118,7 +118,7 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
                             self.displayInfo(row: 0)
                             
                         }
-                            self.pickerView.reloadAllComponents()
+                        self.pickerView.reloadAllComponents()
                         
                     }
             
@@ -205,19 +205,25 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
     // MARK: Display Info
     func displayInfo(row: Int)
     {
-        // display field abels only
+        
+        // clear all text and labels and hide buttons till loading is complete
         mainEntityLabel.text = ""
         relatedVehicles.text = ""
         relatedStarships.text = ""
+        
         // hide conversion buttons
         conversionButtonSV.isHidden = true
+        metricButton.isHidden = true
+        englishButton.isHidden = true
+
         let currentFieldMap = fieldsMap[objectType!]
         for field in currentFieldMap! {
-            field.nameLabel.text = field.displayName
+            field.nameLabel.text = " "
             field.contentLabel.text = " "
         }
-        // display content when download is finished
-        if !stillDownloading {
+        // display content only when download is finished
+        guard  !stillDownloading  else {return }
+
             if let parsedData = dataManager?.parseJSON(fieldsList: self.objectType!.fields, index: row) {
                 let name = parsedData[0].fieldData  // always name is the first returned field
                 mainEntityLabel.text = name
@@ -244,10 +250,17 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
                 conversionButtonSV.isHidden = true
                 showRelatedData(row:row) }
             else { showExchangeRate() }
-        }
-        // highlight metric and english 
+        
+        // show and highlight metric and english 
+        metricButton.isHidden = false
+        englishButton.isHidden = false
         metricButton.setTitleColor(UIColor.white, for: .normal)
         englishButton.setTitleColor(UIColor.gray, for: .normal)
+        // TODO: replace this with a better solution
+        let button = UIButton()
+        button.setTitle("Metric", for: .normal)
+        convertUnits(button)
+        
     }
     
     func showRelatedData(row: Int) {
@@ -255,33 +268,47 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
         relatedVehicles.isHidden = true
         
         if let dataManager = self.dataManager {
-        dataManager.getRelatedData(objectType: objectType! , field: .vehicles ,index: row)
-        {
-            vehicles in
-            if let vehicles = vehicles {
-                DispatchQueue.main.async {
-                    var text = "Vehicles:\n"
-                    for v in vehicles { text += "-\(v)\n"}
-                    self.relatedVehicles.text = text
-                    self.relatedVehicles.isHidden = false
+            // show related Vehicles
+            dataManager.getRelatedData(objectType: objectType! , field: .vehicles ,index: row)
+            {
+                vehicles in
+                if let vehicles = vehicles {
+                    DispatchQueue.main.async {
+                        var text = "Vehicles:\n"
+                        for v in vehicles { text += "-\(v)\n"}
+                        self.relatedVehicles.text = text
+                        self.relatedVehicles.isHidden = false
+                    }
                 }
             }
-        }
-        
-        dataManager.getRelatedData(objectType: objectType! , field:.starships ,index: row) {
-            starships in
-            if let starships = starships {
-                DispatchQueue.main.async {
-                    var text = "Starships:\n"
-                    for v in starships { text += "-\(v)\n"}
-                    self.relatedStarships.text = text
-                    self.relatedStarships.isHidden = false
+            // show related Startships
+            dataManager.getRelatedData(objectType: objectType! , field:.starships ,index: row) {
+                starships in
+                if let starships = starships {
+                    DispatchQueue.main.async {
+                        var text = "Starships:\n"
+                        for v in starships { text += "-\(v)\n"}
+                        self.relatedStarships.text = text
+                        self.relatedStarships.isHidden = false
+                    }
                 }
             }
+            
+            // show home world
+            // first clear field till home world load is done
+            self.entityInfoFieldContent2.text = " "
+            dataManager.getHomeWorld(objectType: objectType! , field:.homeWorld ,index: row) {
+                homeWorld in
+                if let homeWrold = homeWorld {
+                    DispatchQueue.main.async {
+                        self.entityInfoFieldContent2.text = homeWrold[0] // array must have one home wolrd only
+
+                    }
+                }
+            }
+            
         }
-        
-        }
-        }
+    }
     func showExchangeRate() {
         
         // reuse existing fields for exchange rate
@@ -345,19 +372,23 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
         
         if let size = dataManager?.parseJSON(fieldsList: [sizeField], index: row) {
             let sizeData = size[0].fieldData
-            if let sizeValue = Double(sizeData){
+            if var sizeValue = Double(sizeData){
+                
+                if  (objectType! == .people) { sizeValue = sizeValue / 100 } // height is in cm for people
                 if let sender = sender as? UIButton, let label = sender.titleLabel?.text {
                     switch label{
                     case "Metric":
-                        entityInfoFieldContent3.text = sizeData
+                        entityInfoFieldContent3.text = "\(sizeValue)m"
                         metricButton.setTitleColor(UIColor.white, for: .normal)
                         englishButton.setTitleColor(UIColor.gray, for: .normal)
                     case "English":
                         metricButton.setTitleColor(UIColor.gray, for: .normal)
                         englishButton.setTitleColor(UIColor.white, for: .normal)
-                        let conversionRate = 3.28
+                        let conversionRate = 3.28 // 1m = 3.28 feet
                         let englishValue = sizeValue * conversionRate
-                        entityInfoFieldContent3.text = "\(englishValue)"
+                        let englishwith2Decimals = (englishValue*100).rounded()/100
+                        
+                        entityInfoFieldContent3.text = "\(englishwith2Decimals)f"
                         
                     default:
                         break
