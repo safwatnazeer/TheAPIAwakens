@@ -297,7 +297,7 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
             // show home world
             // first clear field till home world load is done
             self.entityInfoFieldContent2.text = " "
-            dataManager.getHomeWorld(objectType: objectType! , field:.homeWorld ,index: row) {
+            dataManager.getRelatedData(objectType: objectType! , field:.homeWorld ,index: row) {
                 homeWorld in
                 if let homeWrold = homeWorld {
                     DispatchQueue.main.async {

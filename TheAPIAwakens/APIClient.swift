@@ -11,6 +11,11 @@ import Foundation
 public let NetworkingErrorDomain = "com.safwat.TheAPIAwaken.NetworkingError"
 public let MissingHTTPResponseError = 10
 
+typealias JSONDictionary = [String:AnyObject]
+typealias Handler = () -> Void
+
+
+
 
 struct DownloadRequest{
     
@@ -30,25 +35,25 @@ class APIClient {
         self.objectData = [JSONDictionary]()
     }
 
-    func downloadData(objectType : ObjectType, completionHandler: @escaping HandlerWithArrayJSONDictionary) {
+    func fetchFullData(objectType : ObjectType, completionHandler: @escaping ([JSONDictionary]) -> Void) {
          //let config = URLSessionConfiguration.default
         //config.timeoutIntervalForRequest = 5
          let url = "http://swapi.co/api/\(objectType.rawValue)/"
-         downloadDataWithMultiPages(urlString: url, completionHandler: completionHandler)
+         fetchDataWithMultiPages(urlString: url, completionHandler: completionHandler)
     }
 
     
     
-    func downloadDataWithMultiURLS(request: DownloadRequest,  completionHandler: @escaping ([String]) -> Void ){
+    func fetchDataWithMultiURLS<T>(request: DownloadRequest,  completionHandler: @escaping ([T]) -> Void ){
         
-        var tempData = [String]()
+        var tempData = [T]()
         var remainingDownloadTasks = request.urls.count
         
         for url in request.urls {
             downloadJSON(urlString: url ) {
                 jsonData in
                 remainingDownloadTasks -= 1
-                if let result = jsonData[request.resultExtractJSONKeyword] as? String
+                if let result = jsonData[request.resultExtractJSONKeyword] as? T
                 {
                     tempData.append(result)
                     if remainingDownloadTasks == 0 { completionHandler(tempData)}
@@ -58,7 +63,7 @@ class APIClient {
     
     }
    
-    func downloadDataWithMultiPages(urlString: String, completionHandler: @escaping HandlerWithArrayJSONDictionary)
+    func fetchDataWithMultiPages(urlString: String, completionHandler: @escaping ([JSONDictionary]) -> Void)
     {
         
         downloadJSON(urlString: urlString) {
@@ -66,12 +71,12 @@ class APIClient {
             
             if let nextPage = jsonData["next"] as? String {
                 print(nextPage)
-                if let results = jsonData["results"] as? [[String:AnyObject]] {
+                if let results = jsonData["results"] as? [JSONDictionary] {
                     for result in results {
                         self.objectData.append(result)
                     }
                 }
-                self.downloadDataWithMultiPages(urlString: nextPage, completionHandler: completionHandler)
+                self.fetchDataWithMultiPages(urlString: nextPage, completionHandler: completionHandler)
             }
             else {
                 print("That was the last one ---- ")
@@ -80,7 +85,7 @@ class APIClient {
         }
     }
     
-    func downloadJSON(urlString: String, completionHandler: @escaping HandlerWithJSONDictionary) {
+    func downloadJSON(urlString: String, completionHandler: @escaping (JSONDictionary) -> Void) {
         let url = URL(string: urlString)
         let task = session.dataTask(with: url!) { data, response, error in
             // TODO: implement error handeling for JSON Downaloder

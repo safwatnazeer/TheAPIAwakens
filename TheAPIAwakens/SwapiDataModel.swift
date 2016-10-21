@@ -8,10 +8,6 @@
 
 import Foundation
 
-typealias JSONDictionary = [String:AnyObject]
-typealias HandlerWithJSONDictionary = (JSONDictionary) -> Void
-typealias Handler = () -> Void
-typealias HandlerWithArrayJSONDictionary = ([JSONDictionary]) -> Void
 
 struct ParsedField {
     let fieldName : Field
@@ -47,7 +43,7 @@ class SwapiDataManager {
             objectData.removeAll()
             self.lastObjectTypeLoaded = objectType // TODO: what if load failed ?? Fix it
             let apiClient = APIClient()
-            apiClient.downloadData(objectType: objectType) {
+            apiClient.fetchFullData(objectType: objectType) {
                 data in
                     print("data is loaded .. ")
                     self.objectData = data
@@ -128,6 +124,7 @@ class SwapiDataManager {
         let record = objectData[index]
         var recordData = [ParsedField]()
         for currentField in fieldsList {
+            // TODO: remove bang operator as it can blow-up if field returns array or dict
             let parsedField = ParsedField(fieldName: currentField, fieldData: record[currentField.rawValue] as! String)
             recordData.append(parsedField)
         }
@@ -136,47 +133,38 @@ class SwapiDataManager {
         
     }
     
-    func getRelatedData(objectType: ObjectType, field: Field,index: Int,  completionHandler:@escaping ([String]?) -> Void ) {
+        func getRelatedData(objectType: ObjectType, field: Field,index: Int,  completionHandler:@escaping ([String]?) -> Void ) {
+        
+        if objectType != .people  { completionHandler(nil) }
+        
+        var urls = [String]()
+        let record = objectData[index]
+        // TODO: error handling if value is missing
+        if let urlsRelatedItems = record[field.rawValue] as? [String] {
+            urls = urlsRelatedItems
+        }
+        else
+        {
+            if let urlRelatedItem = record[field.rawValue] as? String {
+                urls.append(urlRelatedItem)
+            } else {
+                // error:
+            }
+        }
+        
+            
+            print(urls)
+            
+            let apiClient = APIClient()
+            let request = DownloadRequest(urls: urls, nextPageJSONKeyword: nil, resultExtractJSONKeyword: Field.name.rawValue)
+            apiClient.fetchDataWithMultiURLS(request: request) {
+                data in
+                completionHandler(data)
+            }
+        
+        
+    }
     
-        if objectType != .people  { completionHandler(nil) }
-        
-        
-        let record = objectData[index]
-        // TODO: error handling if value is missing
-        if let urlsRelatedItems = record[field.rawValue] as? [String]
-        {
-            print(urlsRelatedItems)
-            
-            let apiClient = APIClient()
-            let request = DownloadRequest(urls: urlsRelatedItems, nextPageJSONKeyword: nil, resultExtractJSONKeyword: Field.name.rawValue)
-            apiClient.downloadDataWithMultiURLS(request: request) {
-                data in
-                completionHandler(data)
-            }
-        }
-        
-    }
-    func getHomeWorld(objectType: ObjectType, field: Field,index: Int,  completionHandler:@escaping ([String]?) -> Void ) {
-        
-        if objectType != .people  { completionHandler(nil) }
-        
-        
-        let record = objectData[index]
-        // TODO: error handling if value is missing
-        if let urlsRelatedItems = record[field.rawValue] as? String
-        {
-            print(urlsRelatedItems)
-            
-            let apiClient = APIClient()
-            let request = DownloadRequest(urls: [urlsRelatedItems], nextPageJSONKeyword: nil, resultExtractJSONKeyword: Field.name.rawValue)
-            apiClient.downloadDataWithMultiURLS(request: request) {
-                data in
-                completionHandler(data)
-            }
-        }
-        
-    }
-
 }
 
 
