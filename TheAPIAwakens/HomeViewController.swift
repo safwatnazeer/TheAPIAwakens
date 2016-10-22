@@ -13,7 +13,7 @@ class HomeViewController: UIViewController {
     
     @IBOutlet weak var button: UIButton!
     
-    let dataManager = SwapiDataManager()
+    let dataManager = SwapiDataManager() // Create model object and pass it to detail view
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,24 +28,27 @@ class HomeViewController: UIViewController {
     
 
     
-    
+     // Fucntion checks for selection and set object type before passing to detail view
      override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
         if let id = segue.identifier {
             if let vc = segue.destination as? DetailViewController {
+                
+                vc.dataManager = dataManager
+                
                 switch id {
                 case "showPeople":
                     vc.objectType = ObjectType.people
                     vc.navigationItemText = "Characters"
-                    vc.dataManager = dataManager
+                    
                 case "showVehicles":
                     vc.objectType = ObjectType.vehicles
                     vc.navigationItemText = "Vehicles"
-                    vc.dataManager = dataManager
+                    
                 case "showStarships":
                     vc.objectType = ObjectType.starships
                     vc.navigationItemText = "Starships"
-                    vc.dataManager = dataManager
+                    
                 
                 default:
                     break

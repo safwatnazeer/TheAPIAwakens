@@ -8,7 +8,7 @@
 
 import UIKit
 
-// Field map
+// Field map struct
 struct dataField {
     let jsonName: Field // name of field in results json
     let displayName: String // display name of field
@@ -19,10 +19,8 @@ struct dataField {
 class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewDataSource , UITextViewDelegate {
 
     
-    
-    
     var navigationItemText: String = ""
-    var objectType: ObjectType?
+    var objectType: ObjectType?  // passed from home controller
     
     // data elements in screen upper section
     let entityName = ""
@@ -53,7 +51,7 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
     @IBOutlet weak var entityInfoFieldContent4: UILabel!
     @IBOutlet weak var entityInfoFieldContent5: UILabel!
     
-    // Label for samllest and argest
+    // Label for samllest and largest
     @IBOutlet weak var smallestAndLargest: UILabel!
     @IBOutlet weak var smallestAndLargestFieldName: UILabel!
     
@@ -65,7 +63,6 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
     @IBOutlet weak var conversionButtonSV: UIStackView!
     @IBOutlet weak var creditButton: UIButton!
     @IBOutlet weak var usdButton: UIButton!
-    
     @IBOutlet weak var englishButton: UIButton!
     @IBOutlet weak var metricButton: UIButton!
     
@@ -77,6 +74,7 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
     //picker View
     @IBOutlet weak var pickerView: UIPickerView!
     
+    //activity indicator
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     //  status
@@ -108,18 +106,23 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
         if !stillDownloading {
             stillDownloading = true
             dataManager?.loadData(objectType:objectType!) {
-                
+                resultCode in
                 DispatchQueue.main.async {
                     self.activityIndicator.stopAnimating()
                     self.stillDownloading = false
-                    if let dataManager = self.dataManager {
-                        if dataManager.isThereData() {
-                           // self.data = self.dataManager.objectData
-                            self.displayInfo(row: 0)
-                            
+                    // Handel error
+                    if resultCode != .success {
+                        self.showErrorMessage(message: resultCode.rawValue)
+                        return
+                    } else {
+                        // load data in picker view and display first record
+                        if let dataManager = self.dataManager
+                        {
+                            if dataManager.isThereData() {
+                                self.displayInfo(row: 0)
+                            }
+                            self.pickerView.reloadAllComponents()
                         }
-                        self.pickerView.reloadAllComponents()
-                        
                     }
             
                 }
@@ -128,14 +131,14 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
         
         
         
-        // display field names only
+        // display blank fields (names and contents)
         displayInfo(row: 0)
     
         
         
     }
     
-    
+    // Setup the mapping between data fields and screen fields for each object type
     func setupFieldMap() {
         
         fieldsMap.updateValue([
@@ -202,7 +205,7 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
     }
     
     
-    // MARK: Display Info
+    // MARK: Display Info details of a selection
     func displayInfo(row: Int)
     {
         
@@ -215,7 +218,8 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
         conversionButtonSV.isHidden = true
         metricButton.isHidden = true
         englishButton.isHidden = true
-
+        
+        // clear all text shown
         let currentFieldMap = fieldsMap[objectType!]
         for field in currentFieldMap! {
             field.nameLabel.text = " "
@@ -223,33 +227,33 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
         }
         // display content only when download is finished
         guard  !stillDownloading  else {return }
-
-            if let parsedData = dataManager?.parseJSON(fieldsList: self.objectType!.fields, index: row) {
-                let name = parsedData[0].fieldData  // always name is the first returned field
-                mainEntityLabel.text = name
-                for uiField in currentFieldMap! {
-                    uiField.nameLabel.text = uiField.displayName
-                    for dataField in parsedData {
-                        if dataField.fieldName == uiField.jsonName {
-                            uiField.contentLabel.text = dataField.fieldData
-                        }
+        if let parsedData = dataManager?.parseData(forFieldsList: self.objectType!.fields, atIndex: row) {
+            let name = parsedData[0].fieldData  // always name is the first returned field
+            mainEntityLabel.text = name
+            
+            for uiField in currentFieldMap! {
+                uiField.nameLabel.text = uiField.displayName
+                for dataField in parsedData {
+                    if dataField.fieldName == uiField.jsonName {
+                        uiField.contentLabel.text = dataField.fieldData
                     }
                 }
             }
+        }
         
         // show smallest and largest
-            if let dataManager = self.dataManager {
-            let (smallest, largest) = dataManager.getSmallestAndLargest()
-            
-                smallestAndLargestFieldName.text = "  Smallest\n  Largest"
-                smallestAndLargest.text = "\(smallest)\n\(largest)"
-            
-            }
+        if let dataManager = self.dataManager {
+        let (smallest, largest) = dataManager.getSmallestAndLargest()
+        
+            smallestAndLargestFieldName.text = "  Smallest\n  Largest"
+            smallestAndLargest.text = "\(smallest)\n\(largest)"
+        
+        }
         // show related data
-            if objectType == .people {
-                conversionButtonSV.isHidden = true
-                showRelatedData(row:row) }
-            else { showExchangeRate() }
+        if objectType == .people {
+            conversionButtonSV.isHidden = true
+            showRelatedData(row:row) }
+        else { showExchangeRate() }
         
         // show and highlight metric and english 
         metricButton.isHidden = false
@@ -259,10 +263,12 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
         // TODO: replace this with a better solution
         let button = UIButton()
         button.setTitle("Metric", for: .normal)
-        convertUnits(button)
+       // convertUnits(button)
         
     }
     
+    //Function to show addiotnal info that need to be downlaoded separately 
+    // home world, startships , vehicles
     func showRelatedData(row: Int) {
         relatedStarships.isHidden = true
         relatedVehicles.isHidden = true
@@ -271,25 +277,33 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
             // show related Vehicles
             dataManager.getRelatedData(objectType: objectType! , field: .vehicles ,index: row)
             {
-                vehicles in
-                if let vehicles = vehicles {
-                    DispatchQueue.main.async {
-                        var text = "Vehicles:\n"
-                        for v in vehicles { text += "-\(v)\n"}
-                        self.relatedVehicles.text = text
-                        self.relatedVehicles.isHidden = false
+                vehicles , resultCode in
+                DispatchQueue.main.async {
+                    if resultCode == .success {
+                        if let vehicles = vehicles {
+                                var text = "Vehicles:\n"
+                                for v in vehicles { text += "-\(v)\n"}
+                                self.relatedVehicles.text = text
+                                self.relatedVehicles.isHidden = false
+                        }
+                    } else {
+                        self.showErrorMessage(message: resultCode.rawValue)
                     }
                 }
             }
             // show related Startships
             dataManager.getRelatedData(objectType: objectType! , field:.starships ,index: row) {
-                starships in
-                if let starships = starships {
-                    DispatchQueue.main.async {
-                        var text = "Starships:\n"
-                        for v in starships { text += "-\(v)\n"}
-                        self.relatedStarships.text = text
-                        self.relatedStarships.isHidden = false
+                starships, resultCode in
+                DispatchQueue.main.async {
+                    if resultCode == .success {
+                        if let starships = starships {
+                                var text = "Starships:\n"
+                                for v in starships { text += "-\(v)\n"}
+                                self.relatedStarships.text = text
+                                self.relatedStarships.isHidden = false
+                        }
+                    } else {
+                        self.showErrorMessage(message: resultCode.rawValue)
                     }
                 }
             }
@@ -298,24 +312,29 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
             // first clear field till home world load is done
             self.entityInfoFieldContent2.text = " "
             dataManager.getRelatedData(objectType: objectType! , field:.homeWorld ,index: row) {
-                homeWorld in
-                if let homeWrold = homeWorld {
-                    DispatchQueue.main.async {
-                        self.entityInfoFieldContent2.text = homeWrold[0] // array must have one home wolrd only
-
+                homeWorld, resultCode in
+                DispatchQueue.main.async {
+                    if resultCode == .success {
+                        if let homeWrold = homeWorld {
+                                self.entityInfoFieldContent2.text = homeWrold[0] // array must have one home wolrd only
+                        }
+                    } else {
+                        self.showErrorMessage(message: resultCode.rawValue)
                     }
                 }
             }
             
         }
     }
+    
+    //Function to show exchange rate using existing text views that normally used to show vehicles and startships
     func showExchangeRate() {
         
         // reuse existing fields for exchange rate
         relatedVehicles.text = "Exchange Rate =\nGalagtic credits to USD "
         relatedVehicles.isHidden = false
         
-        relatedStarships.text = "200.0"
+        relatedStarships.text = "20.0"  // default exchaneg rate
         relatedStarships.isHidden = false
         relatedStarships.isEditable = true
         relatedStarships.delegate = self
@@ -330,14 +349,16 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
         
     }
     
+    // Fucntion to convert Credits to USD
     @IBAction func convertCurrency(_ sender: AnyObject) {
         
         let row = pickerView.selectedRow(inComponent: 0)
-        
-        if let cost = dataManager?.parseJSON(fieldsList: [.cost], index: row) {
+        if let cost = dataManager?.parseData(forFieldsList: [.cost], atIndex: row)
+        {
         let costData = cost[0].fieldData
         if let costValue = Double(costData){
-            if let sender = sender as? UIButton, let label = sender.titleLabel?.text {
+            if let sender = sender as? UIButton, let label = sender.titleLabel?.text
+            {
                 switch label{
                     case "Credits":
                         entityInfoFieldContent2.text = costData
@@ -347,10 +368,17 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
                         creditButton.setTitleColor(UIColor.gray, for: .normal)
                         usdButton.setTitleColor(UIColor.white, for: .normal)
                         if let rateValue = Double(relatedStarships.text) {
-                        let costUSD = costValue/rateValue
-                        entityInfoFieldContent2.text = "\(costUSD)"
+                            if rateValue > 0 {
+                                let costUSD = costValue/rateValue
+                                entityInfoFieldContent2.text = "\(costUSD)"
+                            }
+                            else {
+                                showErrorMessage(message: "Exchange rate can't be negative")
+                                entityInfoFieldContent2.text = " "
+                            }
                         } else {
                             entityInfoFieldContent2.text = " "
+                            showErrorMessage(message: "You entered invalid number for exchange rate")
                     }
                 default:
                     break
@@ -360,6 +388,7 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
         }
     }
     
+    // Fucntion to convert metric to english
     @IBAction func convertUnits(_ sender: AnyObject) {
         
         let row = pickerView.selectedRow(inComponent: 0)
@@ -370,7 +399,7 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
             
         }
         
-        if let size = dataManager?.parseJSON(fieldsList: [sizeField], index: row) {
+        if let size = dataManager?.parseData(forFieldsList: [sizeField], atIndex: row) {
             let sizeData = size[0].fieldData
             if var sizeValue = Double(sizeData){
                 
@@ -398,6 +427,16 @@ class DetailViewController: UIViewController, UIPickerViewDelegate,UIPickerViewD
         }
     }
     
+    
+    // Method to display error message
+    func showErrorMessage(message: String) {
+        
+        let alert = UIAlertController(title: "Error !!", message:message, preferredStyle: UIAlertControllerStyle.alert)
+        
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+        
+        self.present(alert, animated: true, completion: nil)
+    }
     
     
     // MARK: text view delegates
